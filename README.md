@@ -11,7 +11,7 @@ The model used in the Raspberry is trained in a normal computer (no cloud needee
 
 - [mlflow](https://mlflow.org/)
 
-- [pytorch] (https://pytorch.org/)
+- [pytorch](https://pytorch.org/)
 
 - [ONNX](https://onnx.ai/)
 
