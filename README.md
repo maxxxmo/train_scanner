@@ -46,3 +46,45 @@ To use this repo you need to:
 
 
 
+# Communication
+
+The use case of this project is in High speed railway. Thus, we need to chose a good protocol for our case. In the review of ***Paula Fraga-Lamas*** we are in the Intra-Car use-case. --> real time ethernet or Wi-Fi (802.11ac/ad). We need a 98-99% disponibility and a minus 100ms latency.
+
+First i will start with ethernet. (For Wifi more security is needed and public wifi can create interference). We suppose the ethernet cable is 100m maximum.
+
+I have two communication:
+
+1. Between the sensor and the raspberry-pi --> I need to use RTSP protocol to send videos
+2. Between the raspberry-pi and the train computer --> I need MQTT to send Json of the result
+
+The MQTT message is more important it is sent when something important is detected. We need to make sure detection are sent to the computer.
+
+So i will use Quality of Service (QoS): --> QoS1
+
+With the issue of --> i will also need to compress the frames in H.264 720p and select FPS
+
+## Quality of Service (QoS)
+1. Bandwidth :
+  - maximum capacity of data transmission (in Mbps).
+  - In our case we need to prioritize the MQTT ones in case of limited bandwidth
+2. Delay / latency :
+  - Time of travel for an information
+  - ethernet cable is 100m max: Latency = \frac{Distance}{Speed} = \frac{100}{\simeq 2\times 10^{8}} = 0.5µs it's negligeable. So Latency will come mainly from the raspberry pi during the image processing.
+3. Loss :
+  - When a packet doesnt end at the destination
+  - If some frames disappear there is no issue if the following one is there but for the MQTT message we need to be sure it's sent
+4. Jitter :
+  - Variance of Delay/Latency  (regularity of the flux)
+  - With Ethernet should not be an issue
+5. Availability :
+  - %time of operationnal 
+  - as long as the cable is connected
+    
+
+
+
+
+
+
+
+
