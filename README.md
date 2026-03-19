@@ -63,6 +63,16 @@ First I need to Download it :
 ```
 The goal here is having a Implement a resilient download strategy with auto-resume capabilities to ensure dataset integrity over my unstable and slow wifi
 
+## Table of contents 
+
+From the jupyter file we can see there is a 'table of contents' in the .h5 file. To create a smaller Dataset i will use that.
+![content size](images/content_size.png)
+We can see it's only 14Mo. So i need to extract it.
+![extraction](images/extraction.png)
+Now i have a frsign_v1.0.h5 file in:
+```bash
+ \data\data\datasets\frsign\FRSign_modified\FRSign 
+ ```
 
 # Communication
 
