@@ -111,6 +111,18 @@ sequence                                                         ...
 164                            RGGB                   1920x1200  ...    25         PNG8
 
 [5 rows x 14 columns]
+
+--- Exploring images ---
+fullpath of first image: RecFile_1_20181011_153137_pointgrey_flycapture2_1_ipl_image/33734_rgb.png
+Index(['fullpath', 'x', 'y', 'w', 'h'], dtype='object')
+                                                         fullpath    x    y   w   h
+sequence image
+83       0      RecFile_1_20181011_153137_pointgrey_flycapture...  882  528  15  21
+         1      RecFile_1_20181011_153137_pointgrey_flycapture...  882  528  15  21
+         2      RecFile_1_20181011_153137_pointgrey_flycapture...  882  528  15  21
+         3      RecFile_1_20181011_153137_pointgrey_flycapture...  882  528  15  21
+         4      RecFile_1_20181011_153137_pointgrey_flycapture...  882  528  15  21
+Shape of images dataset: (105352, 5)
 ```
 # Communication
 
