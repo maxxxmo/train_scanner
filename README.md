@@ -46,6 +46,24 @@ To use this repo you need to:
 
 
 
+# Handling the dataset
+
+The dataset is more than 250Go I just want to do a Proof of Concept. So i dont need to use all the data to do a perfect model with the best accuracy. The principal point are the communication and the inference in the raspberry pi.
+
+First I need to Download it :
+
+```bash
+>>     Write-Host "Lancement du téléchargement..." -ForegroundColor Cyan
+>>     curl.exe -L -C - -O https://frsign.irt-systemx.fr/download/FRSign.tar.gz
+>>     if ($LASTEXITCODE -ne 0) {
+>>         Write-Host "Connexion perdue. Relance dans 5 secondes..." -ForegroundColor Yellow
+>>         Start-Sleep -s 5
+>>     }
+>> } while ($LASTEXITCODE -ne 0)
+```
+The goal here is having a Implement a resilient download strategy with auto-resume capabilities to ensure dataset integrity over my unstable and slow wifi
+
+
 # Communication
 
 The use case of this project is in High speed railway. Thus, we need to chose a good protocol for our case. In the review of ***Paula Fraga-Lamas*** we are in the Intra-Car use-case. --> real time ethernet or Wi-Fi (802.11ac/ad). We need a 98-99% disponibility and a minus 100ms latency.
