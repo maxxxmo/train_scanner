@@ -41,6 +41,9 @@ archivePrefix = {arXiv},
 # Getting Started
 
 To use this repo you need to:
+1. Download the Dataset and copy it in ./data
+2. pip install requirements.txt
+3. Run extract_data then order_data to create a yolo type dataset
 
 # Workflow
 
@@ -62,6 +65,11 @@ First I need to Download it :
 >> } while ($LASTEXITCODE -ne 0)
 ```
 The goal here is having a Implement a resilient download strategy with auto-resume capabilities to ensure dataset integrity over my unstable and slow wifi
+## Organisation 
+From the Arxchiv and jupyter we can sum up the organisation as:
+![dataset diagram](images/dataset-diagram.png)
+
+In the images table, each row represents a single bounding box (BBox) associated with a unique combination of a sequence key and an image key
 
 ## Table of contents 
 
@@ -73,8 +81,9 @@ Now i have a frsign_v1.0.h5 file in:
 ```bash
  \data\data\datasets\frsign\FRSign_modified\FRSign 
  ```
+With  ***explore_data*** we confirm the data structure: 
 ```bash
- With  ***explore_data*** we get the data structure: 
+ 
  Clés disponibles : ['/dataframe', '/images']
 
 --- Structure du DataFrame ---
@@ -124,6 +133,56 @@ sequence image
          4      RecFile_1_20181011_153137_pointgrey_flycapture...  882  528  15  21
 Shape of images dataset: (105352, 5)
 ```
+So everything looks fine !
+
+I Exgract the Dataset with ***extract_data*** Each PNG8 file is transformed in a JPEG to gain space (I work on my own computer) and it's resolution is downsized to (640*640). I don't want to destroy the information of the images so i add black on the sides so the frames are still usable. In any case using PNG8 will not be efficient with the raspberry pi as the YOLO model will work better with RGB frames.
+
+
+Now I will split the dataset in 80/20 with ***order_data***
+```bash
+data repartition  (80/20) :
+ - 40251 images to TRAIN
+ - 10062 images to VAL
+```
+
+# Training 
+
+For the training i use Ultralytics and MLFLow
+
+## First training (train_scanner2)
+![alt text](images/results_scanner2.png)
+![alt text](images/confusion_matrix_normalized_scanner2.png)
+![alt text](images/BoxF1_curve2.png)
+The training is a bit slow. I think using the 'm' size is a bad idea the 'n' should be enough and train faster. I also need to add weight_decay as my model stop training and it's seems it's not overfitting.
+
+## Second training (train_scanner4)
+I did 20 epochs with new params on 'yolo26n'
+![alt text](images/results2.png)
+It seems we can train more there is no overfitting and the model seems to adapt i need to try more epochs.
+
+![alt text](images/confusion_matrix_normalized2.png)
+![alt text](images/labels2.jpg)
+As the dataset is not balanced some classes are better than the other. To solve that i can either:
+- See if it gets better with more epochs
+- Use a loss for unbalanced classes
+
+It should also help improving R
+
+# Conversion to ONNX/openVivo and quantization
+
+
+# Testing model on PC CPU
+
+
+
+# Raspberry OS
+
+I need to gain ram and cpu calculus os i will take a specific os from raspberry pi imager.
+[imager](https://www.raspberrypi.com/software/)
+
+First i delete everything on the SD card and mount a new volume
+
+
 # Communication
 
 The use case of this project is in High speed railway. Thus, we need to chose a good protocol for our case. In the review of ***Paula Fraga-Lamas*** we are in the Intra-Car use-case. --> real time ethernet or Wi-Fi (802.11ac/ad). We need a 98-99% disponibility and a minus 100ms latency.
@@ -139,7 +198,37 @@ The MQTT message is more important it is sent when something important is detect
 
 So i will use Quality of Service (QoS): --> QoS1
 
-With the issue of --> i will also need to compress the frames in H.264 720p and select FPS
+
+
+## Establishing the connection (WAN)
+First i will select a static ip for my ethernet port on my pc:
+![alt text](images/send_image.png)
+![alt text](images/send_image2.png)
+
+Second i do the same with the raspberry:
+ On the terminal:
+ ```bash
+ sudo nano /etc/dhcpcd.conf
+ ```
+To modify network configuration
+And add at the end of the file:
+ ```bash
+interface eth0
+static ip_address=192.168.1.11/24
+```
+save with ctrl+O and quit with ctrl+x (I always forget how to save and quit in bash)
+
+## Testing the connection
+ping 192.168.1.11 on the pi should result in:
+
+Answer from 192.168.....
+
+
+
+
+
+
+
 
 ## Quality of Service (QoS)
 1. Bandwidth :

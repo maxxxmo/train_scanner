@@ -1,0 +1,5 @@
+path: ./data/yolo_dataset
+train: train/images
+val: val/images
+nc: 7
+names: ['Chassis A (3 feux verticaux)', 'Chassis C (5 feux verticaux)', 'Chassis F (6 & 1 feux en L inverse)', 'Chassis H (6 & 3 feux en S)', 'Chassis ID2 (2 feux horizontaux)', 'Chassis ID3 (3 feux horizontaux)', 'Chassis R (6 feux dans un disque)']

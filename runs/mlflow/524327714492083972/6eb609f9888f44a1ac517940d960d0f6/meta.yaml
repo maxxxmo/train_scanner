@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/maxmo/Documents/Max/train_scanner/runs/mlflow/524327714492083972/6eb609f9888f44a1ac517940d960d0f6/artifacts
+end_time: 1774029879800
+entry_point_name: ''
+experiment_id: '524327714492083972'
+lifecycle_stage: active
+run_id: 6eb609f9888f44a1ac517940d960d0f6
+run_name: Train_scanner8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1774028211063
+status: 3
+tags: []
+user_id: maxmo
