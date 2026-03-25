@@ -28,3 +28,8 @@ data/
 # IDE
 .vscode/
 .idea/
+
+*.pt
+*.pth
+*.bin
+*.onnx
