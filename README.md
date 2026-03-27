@@ -318,13 +318,6 @@ sudo ip route add 192.168.1.10 dev eth0
 On this step your antivirus software or firewall may block the MQTT.
 
 
-
-## Checking Python version on the pi and libs
-python --version --> 3.15.3
-Creating environment in the created folder:
-python3 -m venv .venv
-
-
 ## Creating the video
 The data i send is from the validation of the yolo but i only want to test it so i wont send everything. 
 One video for a PoC shoud be enough so i take the sequence 83. Using create_video I create a specific folder.
