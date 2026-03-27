@@ -210,7 +210,11 @@ First i did convert to INT8 Conversion, it was working on my laptop but wasnt wo
 To test if the performance are either slow or degrated i test it on the PC CPU before switching to the raspberry pi with ./src/models/conversion.py
 
 # Raspberry pi
-XXXXXXXXXXXXX
+As i want a real time system. I need to exectute different threads.
+I have 3 threads :
+- One for RTSP connexion to capture the frames and updating a single image buffer. 
+- One for the AI inference
+- One for the MQTT protocol and sending back the results
 
 ![Diagram of the system](images/communication.png)
 
