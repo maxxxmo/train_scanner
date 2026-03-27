@@ -146,6 +146,7 @@ So everything looks fine !
 
 I Exgract the Dataset with ***extract_data*** Each PNG8 file is transformed in a JPEG to gain space (I work on my own computer) and it's resolution is downsized to (640*640). I don't want to destroy the information of the images so i add black on the sides so the frames are still usable. In any case using PNG8 will not be efficient with the raspberry pi as the YOLO model will work better with RGB frames.
 
+***More explanation in ./data/readme.md on the Extraction***
 
 Now I will split the dataset in 80/20 with ***order_data***
 ```bash
@@ -325,6 +326,8 @@ I get 57 images.
 
 
 # Future and improvments
+
+- Latency measures
 - Raspberry ressource monitoring
 - Security and redundancy
      
