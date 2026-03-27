@@ -1,25 +1,28 @@
 # TRAIN_SCANNER
-![Project Diagramm](images/project_diagramm.png)
 
 The main goal is to create a real time system (Raspberry pi) that receive data and perform detection. Once the detection done the result is sent back to a computer.
 The model used in the Raspberry is trained in a normal computer (no cloud needeed) and results are composed of different metrics and consumption analysis.
+![Project Diagramm](images/project_diagramm.png)
 
+# Table of Contents
+- [Sources](#sources)
+- [Data Sources](#data-sources)
+- [Getting started](#getting-started)
+- [Handling the dataset](#handling-the-dataset)
+- [Training](#training)
+- [Rapberry pi](#raspberry-pi)
+- [Communication](#communication)
+- [Future and improvments](#future-and-improvments)
 
-# Sources (not ordered)
+# Sources 
 
-- Ultralytics [Yolo](https://docs.ultralytics.com/fr/)
+[Ultralytics/Yolo](https://docs.ultralytics.com/fr/), [mlflow](https://mlflow.org/), [pytorch](https://pytorch.org/), [openvino](https://github.com/openvinotoolkit/openvino), [pi software](https://www.raspberrypi.com/software/), [tar,gz files](https://doc.ubuntu-fr.org/tar), [h5 format](https://www.hdfgroup.org/solutions/hdf5/), [curl](https://curl.se/), [raspberry imager](https://www.raspberrypi.com/software/)
 
-- [mlflow](https://mlflow.org/)
-
-- [pytorch](https://pytorch.org/)
-
-- [ONNX](https://onnx.ai/)
 
 # Data Sources
 
 I will use FRSIGN dataset : [FRSIGNDATASET](https://frsign.irt-systemx.fr/)
 
-Citation :
 >@ARTICLE{2020arXiv200205665H,
        author = {{Harb}, Jeanine and {R{\'e}b{\'e}na}, Nicolas and {Chosidow}, Rapha{\"e}l and {Roblin}, Gr{\'e}goire and {Potarusov}, Roman and {Hajri}, Hatem},
         title = "{FRSign: A Large-Scale Traffic Light Dataset for Autonomous Trains}",
@@ -43,28 +46,34 @@ archivePrefix = {arXiv},
 To use this repo you need to:
 1. Download the Dataset and copy it in ./data
 2. pip install requirements.txt
-3. Run extract_data then order_data to create a yolo type dataset
-
-# Workflow
-
-
+3. Run ./data/extract_data then ./data/order_data to create a yolo type dataset
+4. Train the model using ./src/training/train.py
+5. Convert the model using ./model/convert.py (you will need to put the path of the .pt of your trainning)
+6. Create a folder on the pi with paho.mqtt, YOLO, openCV
+7. Follow the configuration steps for the connection
+8. Start pi_inference.py
 
 # Handling the dataset
 
-The dataset is more than 250Go I just want to do a Proof of Concept. So i dont need to use all the data to do a perfect model with the best accuracy. The principal point are the communication and the inference in the raspberry pi.
+The dataset (in a .tar.gz format) is more than 250Go. I just want to do a Proof of Concept. And the issue is i do not have that much place on my computer so i will need to adapt.
 
-First I need to Download it :
+First I need to Download it 
+The goal is having a Implement a resilient download strategy with auto-resume capabilities to ensure dataset integrity over my unstable and slow wifi:
 
 ```bash
->>     Write-Host "Lancement du téléchargement..." -ForegroundColor Cyan
 >>     curl.exe -L -C - -O https://frsign.irt-systemx.fr/download/FRSign.tar.gz
 >>     if ($LASTEXITCODE -ne 0) {
->>         Write-Host "Connexion perdue. Relance dans 5 secondes..." -ForegroundColor Yellow
+>>         Write-Host "Connexion perdue. Relance dans 5 secondes..."
 >>         Start-Sleep -s 5
->>     }
+>>        }
 >> } while ($LASTEXITCODE -ne 0)
+
 ```
-The goal here is having a Implement a resilient download strategy with auto-resume capabilities to ensure dataset integrity over my unstable and slow wifi
+To know:
+- .tar format: (tape archiver). Group files in one block easier to move and transfer
+- .gz format: A compression format
+- .h5 Organisation of the dataset in a hierarchical data format. I can extract ditinc part if I need
+
 ## Organisation 
 From the Arxchiv and jupyter we can sum up the organisation as:
 ![dataset diagram](images/dataset-diagram.png)
@@ -156,7 +165,7 @@ For the training i use Ultralytics and MLFLow
 The training is a bit slow. I think using the 'm' size is a bad idea the 'n' should be enough and train faster. I also need to add weight_decay as my model stop training and it's seems it's not overfitting.
 
 ## Second training (train_scanner4)
-I did 20 epochs with new params on 'yolo26n'
+I did 10 epochs with new params on 'yolo26n'
 ![alt text](images/results2.png)
 It seems we can train more there is no overfitting and the model seems to adapt i need to try more epochs.
 
@@ -167,21 +176,50 @@ As the dataset is not balanced some classes are better than the other. To solve 
 - Use a loss for unbalanced classes
 
 It should also help improving R
+## Third Training
+This trzining was done after the first test of the complete system. What i imagined was true, the ffmpeg creates artefacts and reduce the performance of the model.
 
+I added these parameters:
+
+```python
+# video compression related
+  hsv_s: 0.6  # light variation
+  hsv_v: 0.6  # luminance variation
+  imgsz: 640         
+  scale: 0.5  # small zooms
+  
+  # for unbalanced class
+  mosaic: 1.0 #
+  mixup: 0.15 #
+  copy_paste: 0.3 #
+```
+
+I get:
+![BoxF1_curve3](images/BoxF1_curve3.png)
+![confusion_matrix_normalized3](images/confusion_matrix_normalized3.png)
+![results3](images/results3.png)
+
+Those are way better results on the val but we need to test it on the full sytem.
 # Conversion to ONNX/openVivo and quantization
+To convert I use ./src/models/conversion.py
+First i did convert to INT8 Conversion, it was working on my laptop but wasnt working on the pi:
 
+--> switching to fp16
 
 # Testing model on PC CPU
+To test if the performance are either slow or degrated i test it on the PC CPU before switching to the raspberry pi with ./src/models/conversion.py
 
+# Raspberry pi
+XXXXXXXXXXXXX
 
+![Diagram of the system](images/communication.png)
 
 # Raspberry OS
 
 I need to gain ram and cpu calculus os i will take a specific os from raspberry pi imager.
-[imager](https://www.raspberrypi.com/software/)
+
 
 First i delete everything on the SD card and mount a new volume
-
 
 # Communication
 
@@ -193,12 +231,6 @@ I have two communication:
 
 1. Between the sensor and the raspberry-pi --> I need to use RTSP protocol to send videos
 2. Between the raspberry-pi and the train computer --> I need MQTT to send Json of the result
-
-The MQTT message is more important it is sent when something important is detected. We need to make sure detection are sent to the computer.
-
-So i will use Quality of Service (QoS): --> QoS1
-
-
 
 ## Establishing the connection (WAN)
 First i will select a static ip for my ethernet port on my pc:
@@ -223,35 +255,79 @@ ping 192.168.1.11 on the pi should result in:
 
 Answer from 192.168.....
 
+## Installing ffmpeg and mediamtx
+I do it directly on windows powershell:
+[ffmpeg](https://lecrabeinfo.net/tutoriels/installer-ffmpeg-sur-windows/#installer-ffmpeg-sur-windows)
+
+
+## Sending video to mediamtx:
+[ffmpeg library](https://ffmpeg.org/ffmpeg.html)
+From this: ffmpeg [global_options] {[input_file_options] -i input_url} ... {[output_file_options] output_url} ... 
+
+```bash
+ffmpeg -re -stream_loop -1 -start_number 4 -framerate 30 -i seq83_img%d.jpg -c:v libx264 -preset ultrafast -tune zerolatency -f rtsp rtsp://localhost:8554/chassis
+```
+
+Here it's 30 fps and infinite. We send in H.264 and prefere speed to compression. Sending the images as soon as they are ready.
+
+### Improving ffmpeg
+```bash
+ffmpeg -re -stream_loop -1 -start_number 4 -framerate 30 -i seq83_img%d.jpg -c:v libx264 -preset medium -crf 18 -maxrate 8M -bufsize 16M -pix_fmt yuv420p -g 30 -keyint_min 30 -tune zerolatency -f rtsp rtsp://localhost:8554/chassis
+```
+The H.264 is quality 18. We control the bitrate. And send a full image (i-frame) every second. We also send with luminance chrominance colors.
+
+### Final version of ffmpeg 
+```bash
+ffmpeg -re -stream_loop -1 -start_number 4 -framerate 30 -i seq83_img%d.jpg -vf "scale=640:640" -c:v libx264 -preset ultrafast -crf 20 -pix_fmt yuvj420p -g 30 -tune zerolatency -f rtsp -rtsp_transport udp rtsp://localhost:8554/chassis
+```
+H.264 quality 20. More color range, UDP protocol.
+UPD: When there is a packet loss we ignore it and continue. As the framerate is 30 fps is doesnt change anything.
+
+
+## Mosquitto to get the mqtt messages
+
+Once installed i need to give permissions for systems outside of windows
+
+in:
+
+```bash
+C:\Program Files\mosquitto\mosquitto.conf
+```
+I add:
+```bash
+listener 1883
+allow_anonymous true
+```
+To restart services:
+![updatesvc](images/update_msc.png)
+Then to test:
+```bash
+PS C:\Users\maxmo> netstat -an | findstr 1883
+  TCP    0.0.0.0:1883           0.0.0.0:0              LISTENING
+```
+
+##  Issue on the PI to send MQTT send on wlan0 instead of eth0
+```bash
+sudo ip route add 192.168.1.10 dev eth0
+```
+
+On this step your antivirus software or firewall may block the MQTT.
 
 
 
+## Checking Python version on the pi and libs
+python --version --> 3.15.3
+Creating environment in the created folder:
+python3 -m venv .venv
 
 
+## Creating the video
+The data i send is from the validation of the yolo but i only want to test it so i wont send everything. 
+One video for a PoC shoud be enough so i take the sequence 83. Using create_video I create a specific folder.
+I get 57 images.
 
 
-## Quality of Service (QoS)
-1. Bandwidth :
-  - maximum capacity of data transmission (in Mbps).
-  - In our case we need to prioritize the MQTT ones in case of limited bandwidth
-2. Delay / latency :
-  - Time of travel for an information
-  - ethernet cable is 100m max: Latency = \frac{Distance}{Speed} = \frac{100}{\simeq 2\times 10^{8}} = 0.5µs it's negligeable. So Latency will come mainly from the raspberry pi during the image processing.
-3. Loss :
-  - When a packet doesnt end at the destination
-  - If some frames disappear there is no issue if the following one is there but for the MQTT message we need to be sure it's sent
-4. Jitter :
-  - Variance of Delay/Latency  (regularity of the flux)
-  - With Ethernet should not be an issue
-5. Availability :
-  - %time of operationnal 
-  - as long as the cable is connected
-    
-
-
-
-
-
-
-
-
+# Future and improvments
+- Raspberry ressource monitoring
+- Security and redundancy
+     

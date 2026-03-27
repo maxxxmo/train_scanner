@@ -1,6 +1,6 @@
 train_params:
   workers: 4          
-  batch: 8          
+  batch: -1          
   imgsz: 640
   epochs: 50
   optimizer: "AdamW"
@@ -8,8 +8,18 @@ train_params:
   weight_decay: 0.01  
   patience: 10        
   save: True          
-  cache: False        
-  fl_gamma: 1.5
+  cache: False   
+  exist_ok: True
+# --- Simulation de Compression Vidéo ---
+  hsv_s: 0.6         # Forte variation de saturation (imite la perte de chrominance)
+  hsv_v: 0.6         # Forte variation de luminance (imite les macroblocs dans le noir)
+  imgsz: 640         # Garde 640 pour la détection...
+  scale: 0.5         # ...MAIS autorise un zoom de 0.5 (simule une basse résolution upscalée)
+  
+  # --- Robustesse aux scènes complexes (tes classes rares) ---
+  mosaic: 1.0        # Indispensable
+  mixup: 0.15        # Superpose des artefacts
+  copy_paste: 0.3    # "Téléporte" tes petites classes pour multiplier les cas
 
 
 experiment_name: "Train_scanner"

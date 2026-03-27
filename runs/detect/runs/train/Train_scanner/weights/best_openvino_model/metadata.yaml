@@ -1,0 +1,29 @@
+description: Ultralytics YOLO26n model trained on C:\Users\maxmo\Documents\Max\train_scanner\data.yaml
+author: Ultralytics
+date: '2026-03-26T15:27:02.092103'
+version: 8.4.24
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: Chassis A (3 feux verticaux)
+  1: Chassis C (5 feux verticaux)
+  2: Chassis F (6 & 1 feux en L inverse)
+  3: Chassis H (6 & 3 feux en S)
+  4: Chassis ID2 (2 feux horizontaux)
+  5: Chassis ID3 (3 feux horizontaux)
+  6: Chassis R (6 feux dans un disque)
+args:
+  batch: 1
+  fraction: 1.0
+  half: false
+  int8: false
+  dynamic: false
+  nms: false
+channels: 3
+end2end: true

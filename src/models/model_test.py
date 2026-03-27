@@ -34,7 +34,7 @@ def test_openvino_performance(model_dir, data_yaml):
     print("="*30)
 
 if __name__ == "__main__":
-    OPENVINO_DIR = "./runs/detect/runs/train/Train_scanner4/weights/best_int8_openvino_model"
+    OPENVINO_DIR = "./runs/detect/runs/train/Train_scanner/weights/best_int8_openvino_model"
     DATA_YAML = "data.yaml"
     
     test_openvino_performance(OPENVINO_DIR, DATA_YAML)
