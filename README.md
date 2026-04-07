@@ -13,6 +13,8 @@ The model used in the Raspberry is trained in a normal computer (no cloud needee
 - [Rapberry pi](#raspberry-pi)
 - [Communication](#communication)
 - [Future and improvments](#future-and-improvments)
+- [Performance Evaluation](#performance-evaluation)
+- [Detection evaluation on pi](#detections-on-pi)
 
 # Sources 
 
@@ -326,6 +328,9 @@ The data i send is from the validation of the yolo but i only want to test it so
 One video for a PoC shoud be enough so i take the sequence 83. Using create_video I create a specific folder.
 I get 57 images.
 
+# Performance Evaluation
+
+# Detections on Pi
 
 # Future and improvments
 
