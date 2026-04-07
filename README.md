@@ -331,6 +331,7 @@ I get 57 images.
 # Performance Evaluation
 
 # Detections on Pi
+ I want to know more about frames in the buffer the number of deleted frame. Frame who where used. Time of inference. Memory and CPU usage. I want to select in a var at the beginning  to activate the monitoring witohut having a big ingfluence on it.
 
 # Future and improvments
 
